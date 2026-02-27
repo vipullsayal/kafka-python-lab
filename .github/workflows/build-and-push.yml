@@ -1,0 +1,35 @@
+name: Build and push producer/consumer to ACR
+
+on:
+  push:
+    branches: [ "main" ]
+
+env:
+  ACR_NAME: vscontainerregistry
+  ACR_LOGIN_SERVER: vscontainerregistry.azurecr.io
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Azure login
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Login to ACR
+        run: az acr login --name $ACR_NAME
+
+      - name: Build and push producer
+        run: |
+          docker build -t $ACR_LOGIN_SERVER/producer:latest ./producer
+          docker push $ACR_LOGIN_SERVER/producer:latest
+
+      - name: Build and push consumer
+        run: |
+          docker build -t $ACR_LOGIN_SERVER/consumer:latest ./consumer
+          docker push $ACR_LOGIN_SERVER/consumer:latest
