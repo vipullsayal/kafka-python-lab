@@ -11,8 +11,8 @@ c = Consumer(
         'sasl.username': '<ccloud key>',
         'sasl.password': '<ccloud secret>',
         'group.id': str(uuid.uuid1()),  # this will create a new consumer group on each invocation.
-        'auto.offset.reset': 'earliest',
-        'error_cb': error_cb,
+        'auto.offset.reset': 'earliest' #,
+        # 'error_cb': error_cb,
     }
 )
 
