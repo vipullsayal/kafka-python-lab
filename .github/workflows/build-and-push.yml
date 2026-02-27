@@ -1,35 +1,27 @@
-name: Build and push producer/consumer to ACR
+name: Build and push producer/consumer to Docker Hub
 
 on:
   push:
-    branches: [ "main" ]
-
-env:
-  ACR_NAME: vscontainerregistry
-  ACR_LOGIN_SERVER: vscontainerregistry.azurecr.io
+    branches: ["main"]
 
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Azure login
-        uses: azure/login@v2
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
         with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
-
-      - name: Login to ACR
-        run: az acr login --name $ACR_NAME
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build and push producer
         run: |
-          docker build -t $ACR_LOGIN_SERVER/producer:latest ./producer
-          docker push $ACR_LOGIN_SERVER/producer:latest
+          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/kafka-producer:latest ./producer
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/kafka-producer:latest
 
       - name: Build and push consumer
         run: |
-          docker build -t $ACR_LOGIN_SERVER/consumer:latest ./consumer
-          docker push $ACR_LOGIN_SERVER/consumer:latest
+          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/kafka-consumer:latest ./consumer
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/kafka-consumer:latest
