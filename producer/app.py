@@ -22,12 +22,12 @@ def error_cb(err):
 # Create producer
 p = Producer(
     {
-        'bootstrap.servers': '<ccloud bootstrap servers>',
+        'bootstrap.servers': 'vskafkalab1.servicebus.windows.net:9093',
         'sasl.mechanism': 'PLAIN',
         'security.protocol': 'SASL_SSL',
-        'sasl.username': '<ccloud key>',
-        'sasl.password': '<ccloud secret>',
-        'error_cb': error_cb,
+        'sasl.username': '$ConnectionString',
+        'sasl.password': 'Endpoint=sb://vskafkalab1.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=iId8K7LaPMa5fKxpJ3GB8SBVMp01IjfmR+AEhBfbtdA=;EntityPath=vspyhontopic' #,
+   #    'error_cb': error_cb,
     }
 )
 
@@ -48,7 +48,7 @@ for n in range(0, 10):
     # For long running
     # produce loops it is recommended to call poll() to serve these
     # delivery report callbacks.
-    p.produce('python-test-topic', value='python test value nr {}'.format(n), callback=acked)
+    p.produce('vspyhontopic', value=f'python test value nr {n}', callback=acked)
 
     # Trigger delivery report callbacks from previous produce calls.
     p.poll(0)
